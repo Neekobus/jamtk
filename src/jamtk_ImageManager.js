@@ -99,6 +99,18 @@ JAMTK.ImageManager = function(helperName, helperParam) {
 	}
 	
 	this.tick = 0;
+	this.timer;
+
+	this.enableAnimation = function(frameDuration){
+		var that = this;
+		this.timer = window.setInterval( function(){  
+			that.tick ++;
+		}, frameDuration );
+	}
+
+	this.disableAnimation = function(){
+		window.clearInterval(this.timer);
+	}
 
 	var localLog = function(message) {
 		//log(message);
