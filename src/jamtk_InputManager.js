@@ -4,6 +4,7 @@ JAMTK.InputManager = function() {
 	
 	this.pointers = {};
 	this.pressed = {};
+	this.listeners = {};
 
 	this.keyPressed = function(key) {
 		if (this.pressed[key]) {
@@ -11,10 +12,16 @@ JAMTK.InputManager = function() {
 		}
 
 		this.pressed[key] = Date.now();
+		this.triggerListeners(key, false);
 	}
 
 	this.keyReleased = function(key) {
-		this.pressed[key] = 0;	
+		this.consumeKey(key);
+		this.triggerListeners(key, true);
+	}
+
+	this.consumeKey = function( key ){
+		this.pressed[key] = 0;
 	}
 
 	this.pressedSince = function(key) {
@@ -37,9 +44,24 @@ JAMTK.InputManager = function() {
 		return this.pointers[key];
 	}
 
-	this.consumeKey = function( key ){
-		this.keyReleased(key);
-		//todo strategy : release after
+	this.addEventListener = function(key, callback) {
+		if(! this.listeners[key]) {
+			this.listeners[key] = [];
+		}
+
+		this.listeners[key].push(callback);
+
+	}
+
+	this.triggerListeners = function(key, isRelease){
+		if(! this.listeners[key]) {
+			return;
+		}
+
+		for (var i = 0; i < this.listeners[key].length; i++) {
+			this.listeners[key][i](key, this, isRelease);
+		};
+
 	}
 
 };
@@ -68,7 +90,7 @@ JAMTK.InputManagerFeederMouse = function(element, pointerName) {
 	}
 
 	this.mousePressed = function(event){
-		var calculatedPosition = this.screenCanvasOffset( event.pageX, event.pageY );
+		var calculatedPosition = JAMTK.DomHelper.getRelativePosition( this.element, event.pageX, event.pageY );
 
 		this.mapper.setPointerPosition(this.pointerName, calculatedPosition);
 		this.mapper.keyPressed( this.pointerName );
@@ -79,44 +101,47 @@ JAMTK.InputManagerFeederMouse = function(element, pointerName) {
 	}
 
 
-	this.screenCanvasOffset = function(x, y) {
-		
-		var offset = this.findPos(this.element);
-		x -= offset.x;
-		y -= offset.y;
-
-		
-		return {"x": x, "y" : y};
-	}
-
-	this.findPos = function(obj) {
-		var curleft = curtop = 0;
-		if (! obj.offsetParent) {
-			return undefined;
-		}
-
-		do {
-			curleft += obj.offsetLeft;
-			curtop += obj.offsetTop;
-		} while (obj = obj.offsetParent);
-
-		return {"x": curleft, "y" : curtop};
-
-	}
+	
 }
 
 
-JAMTK.InputManagerFeederTouch = function() {
+JAMTK.InputManagerFeederTouch = function(element, pointerName) {
 	this.mapper;
+	this.element = element;
+	this.pointerName = pointerName;
+
+	this.onmousePressedBind;
+	this.onmouseReleasedBind;
 
 	this.activate = function() {
-		//this.canvas.addEventListener("touchstart", this.canvasPressed.bind(this));	
-		//this.canvas.addEventListener("touchend", this.canvasReleased.bind(this));		
+		this.onmousePressedBind = this.mousePressed.bind(this);
+		this.onmouseReleasedBind = this.mouseReleased.bind(this);
+
+		this.element.addEventListener("touchstart", this.onmousePressedBind);
+		this.element.addEventListener("touchend", this.onmouseReleasedBind);
 	}
 
 	this.deactivate = function() {
-		
+		this.element.removeEventListener("touchstart", this.onmousePressedBind);
+		this.element.removeEventListener("touchend", this.onmouseReleasedBind);	
 	}
+
+	this.mousePressed = function(event){
+		console.log("YA");
+		console.log(event.changedTouches[0]);
+		var touch = event.changedTouches[0];
+		var calculatedPosition = JAMTK.DomHelper.getRelativePosition( this.element, touch.pageX, touch.pageY );
+
+		this.mapper.setPointerPosition(this.pointerName, calculatedPosition);
+		this.mapper.keyPressed( this.pointerName );
+	}
+
+	this.mouseReleased = function(event){
+		this.mapper.keyReleased( this.pointerName );
+	}
+
+
+	
 }
 
 JAMTK.InputManagerFeederKeyboard = function() {
@@ -217,7 +242,7 @@ JAMTK.InputManagerMapper = function() {
 	this.setPointerPosition = function(key, position) {
 
 		if ( this.pointerCallback[ key ] ){
-			position = this.pointerCallback[ key ].convertPointerPosition( key, position );
+			position = this.pointerCallback[ key ]( key, position );
 		}
 
 		var vector = this.inputManager.pointerPosition(key);
