@@ -70,9 +70,7 @@ JAMTK.InputManagerFeederMouse = function(element, pointerName) {
 	this.mousePressed = function(event){
 		var calculatedPosition = this.screenCanvasOffset( event.pageX, event.pageY );
 
-		this.mapper.pointerPosition(this.pointerName).x = calculatedPosition.x;
-		this.mapper.pointerPosition(this.pointerName).y = calculatedPosition.y;
-
+		this.mapper.setPointerPosition(this.pointerName, calculatedPosition);
 		this.mapper.keyPressed( this.pointerName );
 	}
 
@@ -128,7 +126,12 @@ JAMTK.InputManagerFeederKeyboard = function() {
 	this.onKeyDownBind;
 
 	this.keyCodeToKey = {
-		32 : "KEYBOARD_SPACE"
+		32 : "KEYBOARD_SPACE",
+		16 : "KEYBOARD_SHIFT",
+		37 : "KEYBOARD_LEFT",
+		38 : "KEYBOARD_UP",
+		39 : "KEYBOARD_RIGHT",
+		40 : "KEYBOARD_DOWN",
 	};
 
 	this.activate = function() {
@@ -199,6 +202,7 @@ JAMTK.InputManagerMapper = function() {
 	}
 
 	this.keyPressed = function(key) {
+
 		if (this.mapping[ key ]) {
 			this.inputManager.keyPressed( this.mapping[ key ] );
 		}
@@ -210,13 +214,15 @@ JAMTK.InputManagerMapper = function() {
 		}
 	}
 
-	this.pointerPosition = function(key){
+	this.setPointerPosition = function(key, position) {
 
 		if ( this.pointerCallback[ key ] ){
-			return this.pointerCallback[ key ].convertPointerPosition( key, this.inputManager.pointerPosition(key) );
+			position = this.pointerCallback[ key ].convertPointerPosition( key, position );
 		}
 
-		return this.inputManager.pointerPosition(key);
+		var vector = this.inputManager.pointerPosition(key);
+		vector.copy(position);
+
 	}
 
 	this.addPointerPositionCallback = function(key, callback){

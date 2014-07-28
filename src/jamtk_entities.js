@@ -132,3 +132,11 @@ JAMTK.Vector.prototype.equals = function(vector){
 	return true;
 }
 
+JAMTK.Vector.prototype.copy = function(vector){
+	this.x = vector.x;
+	this.y = vector.y;
+	this.z = vector.z;
+
+	return this;
+}
+
