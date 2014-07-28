@@ -127,8 +127,6 @@ JAMTK.InputManagerFeederTouch = function(element, pointerName) {
 	}
 
 	this.mousePressed = function(event){
-		console.log("YA");
-		console.log(event.changedTouches[0]);
 		var touch = event.changedTouches[0];
 		var calculatedPosition = JAMTK.DomHelper.getRelativePosition( this.element, touch.pageX, touch.pageY );
 

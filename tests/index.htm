@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-Language" content="fr" />
+	<meta name="author" content="Nicolas Brignol" />
+
+	<title>JAMTK - Tests</title>
+
+</head>
+<body >
+	
+	<h1>Unit tests ? Not really.</h1>	
+	
+	<script src="../src/jamtk_entities.js"></script>
+	<script src="../src/jamtk_AStarGraphFinder.js"></script>
+	<script src="../src/jamtk_AStarGridFinderAdapter.js"></script>
+	
+	<script type="text/javascript">
+		var Delegate1 = function(){
+			
+			this.failToReachDestination = function(){
+				console.log("FAIL");
+				alert("FAIL.");
+			};
+
+			this.hasBeenVisited = function(cell){
+				document.write("[<strong>X:" + cell.x + " ");
+				document.write("Y:" + cell.y + " ");
+				document.write("Z:" + cell.z + "</strong>]");
+			};
+			
+			this.destinationReached = function(path){
+				console.log("SUCCES");
+				console.log(path);
+			};
+		}
+
+		var grid = [];
+		for (var line = 0; line < 5; line++) {
+			var l = [];
+			for (var col = 0; col < 5; col++) {
+				var v = JAMTK.Vector.make3d(col, line, 0);
+				l.push( v );
+			};
+			grid.push(l);
+		};
+
+		console.log(grid);
+
+		var del = new Delegate1();
+		var finder = new JAMTK.AStarGridFinderAdapter(grid, del);
+		finder.find( grid[3][3] , grid[3][1]);
+
+	</script>
+
+	<script>
+		var Delegate2 = function(){
+			
+			this.cells = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k"];
+
+			this.getNeighbours = function(identifier){
+				var max 	= this.cells.length -1;
+				var index 	= this.cells.indexOf(identifier);
+				var before 	= index > 0 ? index - 1 : 0;
+				var after 	= index < max ? index + 1 : max ;
+				
+				return [this.cells[before], this.cells[after]];
+			};
+			
+			this.getHeuristic = function(){
+				return 0;
+			};
+			
+			this.failToReachDestination = function(){
+				console.log("FAIL");
+				alert("FAIL.");
+			};
+
+			this.hasBeenVisited = function(identifier){
+				document.write("[<strong>" + identifier + "</strong>]");
+			};
+			
+			this.destinationReached = function(path){
+				console.log("SUCCES");
+				console.log(path);
+			};
+		};
+		
+		/*var d = new Delegate2();
+		var finder = new JAMTK.AStarGraphFinder(d);
+		finder.find("d", "a");*/
+
+	</script>
+	
+</body>
+</html>
