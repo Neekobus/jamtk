@@ -53,6 +53,10 @@ JAMTK.AStarGridFinderAdapter = function(grid, delegate) {
 		var current = this.cellsById[identifier];
 		var neighbours = [];
 
+		if (!current) {
+			return neighbours;
+		}
+
 		for (var i = 0; i < this.options.length; i++) {
 			var option = this.options[i].clone();
 			var neighbour = option.add(current);
@@ -63,7 +67,7 @@ JAMTK.AStarGridFinderAdapter = function(grid, delegate) {
 
 			neighbours.push( this.identifyCell(neighbour) );
 		};
-
+		
 		return neighbours;
 	};
 	
@@ -74,11 +78,27 @@ JAMTK.AStarGridFinderAdapter = function(grid, delegate) {
 		return 2 * (Math.abs(from.x - to.x) + Math.abs(from.y - to.y) + Math.abs(from.z - to.z));
 	};
 	
+	this.getCost = function(cell){
+		if (! this.delegate.getCost) {
+			return 0;
+		}
+
+		return this.delegate.getCost(cell);		
+	}
+
 	this.failToReachDestination = function(){
+		if (! this.delegate.failToReachDestination) {
+			return;
+		}
+
 		this.delegate.failToReachDestination();
 	};
 
 	this.hasBeenVisited = function(identifier){
+		if (! this.delegate.hasBeenVisited) {
+			return;
+		}
+
 		var cell = this.cellsById[identifier];
 		this.delegate.hasBeenVisited( cell );
 	};

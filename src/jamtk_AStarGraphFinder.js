@@ -4,6 +4,7 @@ var JAMTK = JAMTK || {};
 	delegate.getNeighbours(id) //mandatory, must return array of ids
 	
 	delegate.destinationReached(array ids) //mandatory
+	delegate.getCost(cellId) //optionnal
 	delegate.getHeuristic(fromCellId, toCellId) //optionnal
 	delegate.failToReachDestination() //optionnal
 	delegate.hasBeenVisited(id) //optionnal
@@ -27,6 +28,15 @@ JAMTK.AStarGraphFinder = function(delegate) {
 		}
 		
 		return this.delegate.getHeuristic(fromNode.identifier, toNode.identifier);
+		
+	}
+
+	this.getCost = function(node){
+		if (! this.delegate.getCost) {
+			return 0;
+		}
+		
+		return this.delegate.getCost(node.identifier);
 		
 	}
 
@@ -82,6 +92,8 @@ JAMTK.AStarGraphFinder = function(delegate) {
 	}
 
 	this.failToReachDestination = function(){
+		this.logNode("Failed to Reach destination");
+
 		if (this.delegate.failToReachDestination) {
 			this.delegate.failToReachDestination();
 		}
@@ -166,7 +178,7 @@ JAMTK.AStarGraphFinder = function(delegate) {
 			for (var i = 0; i < options.length; i++) {
 				
 				var adj = this.makeNode(options[i]);
-				adj.cost = currentNode.cost + 1; 
+				adj.cost = currentNode.cost + 1 + this.getCost(currentNode); 
 				adj.heuristic = this.getHeuristic(adj, destinationNode);
 
 				this.logNode("Check Adjacents cells", adj);
