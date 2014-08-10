@@ -12,10 +12,9 @@ TBD :
 -----
  * universalPreloader
  * BresenhamFinder (vector array as response)
- * LevelLoader (with custom levelBuilder)
  * CenteredCanvas (on resize) & fullscreen handler
  * Basic actor (position, move strategy, imageKey) ?
- * menu
+ * Menu
 
 Existing Components : 
 ---------------------
@@ -26,5 +25,6 @@ Existing Components :
 * Storage : Mapped around Cookies.
 * AStar : Graph or Grid based pathfinder. 
 * DomHelper : Some DOM utilities.
-
-
+* JsonLevelLoader : Basic tool for loading and delegating level building.
+* ControllerManager : Basic main controller and framework for customized concrete controllers.
+* Looper : Simple wrapper for setInterval, with frame duration.
