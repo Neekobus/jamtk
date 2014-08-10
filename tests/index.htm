@@ -13,11 +13,14 @@
 	
 	<h1>Unit tests ? Not really.</h1>	
 	
+	<script src="../src/jamtk_JsonLevelLoader.js"></script>
 	<script src="../src/jamtk_entities.js"></script>
 	<script src="../src/jamtk_AStarGraphFinder.js"></script>
 	<script src="../src/jamtk_AStarGridFinderAdapter.js"></script>
 	
 	<script type="text/javascript">
+var t  = new JAMTK.JsonLevelLoader("super%id%aaa");
+t.loadLevel(12);
 		var Delegate1 = function(){
 			
 			this.failToReachDestination = function(){
