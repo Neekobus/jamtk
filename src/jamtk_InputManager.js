@@ -185,14 +185,59 @@ JAMTK.InputManagerFeederKeyboard = function() {
 
 JAMTK.InputManagerFeederIcade = function() {
 	this.mapper;
+	this.onKeyUpBind;
+	
+	this.keyCodeToKeyDown = {
+		81 : "ICADE_LEFT",
+		90 : "ICADE_UP",
+		68 : "ICADE_RIGHT",
+		88 : "ICADE_DOWN",
+		89 : "ICADE_BUTTON_1",
+		85 : "ICADE_BUTTON_2",
+		73 : "ICADE_BUTTON_3",
+		79 : "ICADE_BUTTON_4",
+		72 : "ICADE_BUTTON_5",
+		74 : "ICADE_BUTTON_6",
+		75 : "ICADE_BUTTON_7",
+		76 : "ICADE_BUTTON_8",
+	};
+
+	this.keyCodeToKeyUp = {
+		65 : "ICADE_LEFT",
+		69 : "ICADE_UP",
+		67 : "ICADE_RIGHT",
+		87 : "ICADE_DOWN",
+		82 : "ICADE_BUTTON_1",
+		78 : "ICADE_BUTTON_2",
+		188 : "ICADE_BUTTON_3",
+		71 : "ICADE_BUTTON_4",
+		82 : "ICADE_BUTTON_5",
+		78 : "ICADE_BUTTON_6",
+		80 : "ICADE_BUTTON_7",
+		86 : "ICADE_BUTTON_8",
+	};
 
 	this.activate = function() {
-		
+		this.onKeyUpBind = this.onKeyUp.bind(this);
+  		window.addEventListener('keyup', this.onKeyUpBind, false);
 	}
 
 	this.deactivate = function() {
-		
+		window.removeEventListener('keyup', this.onKeyUpBind);
 	}
+
+	this.onKeyUp = function(event) {
+		console.log(event.keyCode);
+		if ( this.keyCodeToKeyUp[ event.keyCode ] ) {
+			this.mapper.keyReleased( this.keyCodeToKeyUp[ event.keyCode ] );
+		}
+
+		if ( this.keyCodeToKeyDown[ event.keyCode ] ) {
+			this.mapper.keyPressed( this.keyCodeToKeyDown[ event.keyCode ] );
+		}
+
+	}
+
 }
 
 JAMTK.InputManagerMapper = function() {
