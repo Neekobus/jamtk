@@ -108,6 +108,14 @@ JAMTK.Vector.prototype.multiply = function(vector){
 	return this;
 }
 
+JAMTK.Vector.prototype.scale = function(value){
+	this.x *= value;
+	this.y *= value;
+	this.z *= value;
+
+	return this;
+}
+
 JAMTK.Vector.prototype.normalize = function(){
 	if (this.x !=0) this.x /= Math.abs(this.x);
 	if (this.y !=0) this.y /= Math.abs(this.y);
