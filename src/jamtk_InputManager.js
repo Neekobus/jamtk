@@ -90,6 +90,7 @@ JAMTK.InputManagerFeederMouse = function(element, pointerName) {
 	}
 
 	this.mousePressed = function(event){
+		event.preventDefault();
 		var calculatedPosition = JAMTK.DomHelper.getRelativePosition( this.element, event.pageX, event.pageY );
 
 		this.mapper.setPointerPosition(this.pointerName, calculatedPosition);
@@ -127,6 +128,7 @@ JAMTK.InputManagerFeederTouch = function(element, pointerName) {
 	}
 
 	this.mousePressed = function(event){
+		event.preventDefault();
 		var touch = event.changedTouches[0];
 		var calculatedPosition = JAMTK.DomHelper.getRelativePosition( this.element, touch.pageX, touch.pageY );
 
@@ -171,13 +173,17 @@ JAMTK.InputManagerFeederKeyboard = function() {
 	}
 
 	this.onKeyUp = function(event) {
+		
 		if ( this.keyCodeToKey[ event.keyCode ] ) {
+			event.preventDefault();
 			this.mapper.keyReleased( this.keyCodeToKey[ event.keyCode ] );
 		}
 	}
 
 	this.onKeyDown = function(event){
+		
 		if ( this.keyCodeToKey[ event.keyCode ] ) {
+			event.preventDefault();
 			this.mapper.keyPressed( this.keyCodeToKey[ event.keyCode ] );
 		}
 	}
@@ -227,12 +233,14 @@ JAMTK.InputManagerFeederIcade = function() {
 	}
 
 	this.onKeyUp = function(event) {
-		console.log(event.keyCode);
+		
 		if ( this.keyCodeToKeyUp[ event.keyCode ] ) {
+			event.preventDefault();
 			this.mapper.keyReleased( this.keyCodeToKeyUp[ event.keyCode ] );
 		}
 
 		if ( this.keyCodeToKeyDown[ event.keyCode ] ) {
+			event.preventDefault();
 			this.mapper.keyPressed( this.keyCodeToKeyDown[ event.keyCode ] );
 		}
 
