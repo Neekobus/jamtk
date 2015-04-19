@@ -108,6 +108,22 @@ JAMTK.Vector.prototype.multiply = function(vector){
 	return this;
 }
 
+JAMTK.Vector.prototype.minLimit = function(vectorLimit){
+	this.x = this.x < vectorLimit.x ? vectorLimit.x : this.x;
+	this.y = this.y < vectorLimit.y ? vectorLimit.y : this.y;
+	this.z = this.z < vectorLimit.z ? vectorLimit.z : this.z;
+	return this;
+}
+
+
+JAMTK.Vector.prototype.maxLimit = function(vectorLimit){
+	this.x = this.x > vectorLimit.x ? vectorLimit.x : this.x;
+	this.y = this.y > vectorLimit.y ? vectorLimit.y : this.y;
+	this.z = this.z > vectorLimit.z ? vectorLimit.z : this.z;
+	return this;
+}
+
+
 JAMTK.Vector.prototype.scale = function(value){
 	this.x *= value;
 	this.y *= value;
